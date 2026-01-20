@@ -1,0 +1,340 @@
+<div id="baycare-cases-widget" class="bc-cases-container">
+
+  <div class="bc-cases-header">
+    <div class="bc-header-title">
+      <span class="bc-logo-icon">✚</span> BayCare <span class="bc-subtitle">My Cases</span>
+    </div>
+    <div class="bc-header-actions">
+        <input type="text" id="bc-case-search" placeholder="Search MRN, ID or Unit..." onkeyup="filterBaycareCases()">
+    </div>
+  </div>
+
+  <div class="bc-stats-row">
+    <div class="bc-stat-card">
+      <span class="bc-stat-val">12</span>
+      <span class="bc-stat-label">Active Cases</span>
+    </div>
+    <div class="bc-stat-card urgent">
+      <span class="bc-stat-val">3</span>
+      <span class="bc-stat-label">Urgent / STAT</span>
+    </div>
+    <div class="bc-stat-card">
+      <span class="bc-stat-val">5</span>
+      <span class="bc-stat-label">Pending Auth</span>
+    </div>
+  </div>
+
+  <div class="bc-table-wrapper">
+    <table class="bc-cases-table" id="bc-cases-table">
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Ticket ID</th>
+          <th>Patient MRN</th>
+          <th>Unit</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="bc-badge status-urgent">Urgent</span></td>
+          <td class="bc-id">CM-892102</td>
+          <td>99283102</td>
+          <td>3 East</td>
+          <td>Discharge Planning</td>
+          <td>Oct 24</td>
+          <td><button class="bc-action-btn" onclick="viewCase('CM-892102')">View</button></td>
+        </tr>
+        <tr>
+          <td><span class="bc-badge status-pending">Pending</span></td>
+          <td class="bc-id">CM-892055</td>
+          <td>12004592</td>
+          <td>4 West</td>
+          <td>Insurance Auth</td>
+          <td>Oct 24</td>
+          <td><button class="bc-action-btn" onclick="viewCase('CM-892055')">View</button></td>
+        </tr>
+        <tr>
+          <td><span class="bc-badge status-routine">Routine</span></td>
+          <td class="bc-id">CM-891900</td>
+          <td>44592011</td>
+          <td>ICU-B</td>
+          <td>Social Work</td>
+          <td>Oct 23</td>
+          <td><button class="bc-action-btn" onclick="viewCase('CM-891900')">View</button></td>
+        </tr>
+        <tr>
+          <td><span class="bc-badge status-urgent">STAT</span></td>
+          <td class="bc-id">CM-891882</td>
+          <td>33201992</td>
+          <td>ER-12</td>
+          <td>Transport</td>
+          <td>Oct 23</td>
+          <td><button class="bc-action-btn" onclick="viewCase('CM-891882')">View</button></td>
+        </tr>
+        <tr>
+          <td><span class="bc-badge status-closed">Closed</span></td>
+          <td class="bc-id">CM-880122</td>
+          <td>55029100</td>
+          <td>3 East</td>
+          <td>DME</td>
+          <td>Oct 20</td>
+          <td><button class="bc-action-btn secondary" onclick="viewCase('CM-880122')">Archive</button></td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <div id="bc-empty-state" class="bc-empty-state" style="display:none;">
+        <p>No cases found matching your search.</p>
+    </div>
+  </div>
+
+  <div class="bc-footer">
+    <span>Showing 5 of 12 active cases</span>
+    <div class="bc-pagination">
+        <button disabled>&lt;</button>
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>&gt;</button>
+    </div>
+  </div>
+
+  <style>
+    #baycare-cases-widget {
+      /* BayCare Brand Colors */
+      --bc-blue-primary: #00B6DE;   /* Cerulean */
+      --bc-blue-dark: #002C77;      /* Resolution Blue */
+      
+      /* UI Colors */
+      --bc-bg-light: #f8fafc;
+      --bc-border: #e2e8f0;
+      --bc-text-main: #334155;
+      --bc-text-light: #64748b;
+      --bc-white: #ffffff;
+      
+      /* Status Colors */
+      --status-urgent-bg: #fef2f2;
+      --status-urgent-text: #ef4444;
+      --status-routine-bg: #f0f9ff;
+      --status-routine-text: #0284c7;
+      --status-pending-bg: #fff7ed;
+      --status-pending-text: #f59e0b;
+      --status-closed-bg: #f1f5f9;
+      --status-closed-text: #64748b;
+    }
+
+    .bc-cases-container {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bc-white);
+      border: 1px solid var(--bc-border);
+      border-radius: 8px;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      color: var(--bc-text-main);
+      overflow: hidden;
+    }
+
+    /* Header Styling */
+    .bc-cases-header {
+      background-color: var(--bc-blue-dark);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--bc-white);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .bc-header-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+    
+    .bc-logo-icon { color: var(--bc-blue-primary); margin-right: 8px; }
+    .bc-subtitle { font-weight: 400; opacity: 0.9; margin-left: 5px; }
+
+    #bc-case-search {
+        padding: 8px 12px;
+        border-radius: 4px;
+        border: none;
+        font-size: 0.9rem;
+        width: 220px;
+    }
+    #bc-case-search::placeholder { color: #94a3b8; }
+    #bc-case-search:focus { outline: 2px solid var(--bc-blue-primary); }
+
+    /* Summary Stats Row */
+    .bc-stats-row {
+        display: flex;
+        border-bottom: 1px solid var(--bc-border);
+        background-color: var(--bc-bg-light);
+    }
+    .bc-stat-card {
+        flex: 1;
+        text-align: center;
+        padding: 15px;
+        border-right: 1px solid var(--bc-border);
+    }
+    .bc-stat-card:last-child { border-right: none; }
+    
+    .bc-stat-val { display: block; font-size: 1.5rem; font-weight: 700; color: var(--bc-blue-dark); }
+    .bc-stat-label { font-size: 0.75rem; color: var(--bc-text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; display:block; }
+    
+    .bc-stat-card.urgent .bc-stat-val { color: var(--status-urgent-text); }
+
+    /* Table Styling */
+    .bc-table-wrapper {
+        overflow-x: auto;
+    }
+    .bc-cases-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    
+    .bc-cases-table th {
+        text-align: left;
+        padding: 12px 16px;
+        background-color: #f8fafc;
+        color: var(--bc-text-light);
+        font-weight: 600;
+        border-bottom: 1px solid var(--bc-border);
+        white-space: nowrap;
+    }
+
+    .bc-cases-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--bc-border);
+        vertical-align: middle;
+    }
+
+    .bc-cases-table tr:hover { background-color: #f0fdf4; }
+
+    /* Badges */
+    .bc-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1;
+    }
+    .status-urgent { background-color: var(--status-urgent-bg); color: var(--status-urgent-text); }
+    .status-routine { background-color: var(--status-routine-bg); color: var(--status-routine-text); }
+    .status-pending { background-color: var(--status-pending-bg); color: var(--status-pending-text); }
+    .status-closed { background-color: var(--status-closed-bg); color: var(--status-closed-text); }
+
+    .bc-id { font-family: monospace; color: var(--bc-text-light); font-weight: 500; }
+
+    /* Action Buttons */
+    .bc-action-btn {
+        background-color: var(--bc-white);
+        border: 1px solid var(--bc-blue-primary);
+        color: var(--bc-blue-primary);
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    .bc-action-btn:hover { background-color: var(--bc-blue-primary); color: white; }
+    
+    .bc-action-btn.secondary {
+        border-color: var(--bc-border);
+        color: var(--bc-text-light);
+    }
+    .bc-action-btn.secondary:hover { border-color: var(--bc-text-light); background-color: var(--bc-border); color: var(--bc-text-main); }
+
+    /* Footer */
+    .bc-footer {
+        padding: 12px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--bc-bg-light);
+        font-size: 0.85rem;
+        color: var(--bc-text-light);
+    }
+
+    .bc-pagination button {
+        background: white;
+        border: 1px solid var(--bc-border);
+        padding: 5px 10px;
+        margin-left: 4px;
+        border-radius: 4px;
+        cursor: pointer;
+        color: var(--bc-text-main);
+    }
+    .bc-pagination button.active {
+        background-color: var(--bc-blue-primary);
+        color: white;
+        border-color: var(--bc-blue-primary);
+    }
+    .bc-pagination button:disabled { opacity: 0.5; cursor: default; }
+
+    .bc-empty-state { padding: 30px; text-align: center; color: var(--bc-text-light); font-style: italic; }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 600px) {
+        .bc-stat-label { font-size: 0.65rem; }
+        /* Hide less critical columns on small screens */
+        .bc-cases-table th:nth-child(4), .bc-cases-table td:nth-child(4), /* Unit */
+        .bc-cases-table th:nth-child(6), .bc-cases-table td:nth-child(6)  /* Date */
+        { display: none; }
+        
+        #bc-case-search { width: 100%; margin-top: 10px; }
+        .bc-header-actions { width: 100%; }
+    }
+  </style>
+
+  <script>
+    function filterBaycareCases() {
+        var input, filter, table, tr, td, i;
+        input = document.getElementById("bc-case-search");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("bc-cases-table");
+        tr = table.getElementsByTagName("tr");
+        let hasVisible = false;
+
+        // Loop through all table rows (skipping header)
+        for (i = 1; i < tr.length; i++) {
+            // Check Ticket ID (index 1), MRN (index 2), and Unit (index 3)
+            let tdId = tr[i].getElementsByTagName("td")[1];
+            let tdMrn = tr[i].getElementsByTagName("td")[2];
+            let tdUnit = tr[i].getElementsByTagName("td")[3];
+            
+            if (tdId || tdMrn) {
+                let txtId = tdId.textContent || tdId.innerText;
+                let txtMrn = tdMrn.textContent || tdMrn.innerText;
+                let txtUnit = tdUnit.textContent || tdUnit.innerText;
+
+                // Match against any of the columns
+                if (txtId.toUpperCase().indexOf(filter) > -1 || 
+                    txtMrn.toUpperCase().indexOf(filter) > -1 ||
+                    txtUnit.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    hasVisible = true;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+
+        // Toggle Empty State message
+        document.getElementById("bc-empty-state").style.display = hasVisible ? "none" : "block";
+    }
+
+    function viewCase(id) {
+        // In a real implementation, this would redirect
+        alert("Navigating to case details for: " + id);
+    }
+  </script>
+</div>
